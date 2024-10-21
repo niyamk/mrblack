@@ -99,20 +99,26 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:mrblack/auths/storage_auth.dart';
+import 'package:mrblack/screens/voting_screen.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key, required this.players});
+
   final List<String> players;
 
   @override
   State<GameScreen> createState() => _GameScreenState();
 }
 
+// List<List<String>> playerNameAndTheirWord = [];
+
 class _GameScreenState extends State<GameScreen> {
   late List<String> players;
   late List<String> pairOfWord;
   late int undercoverIndex;
-  late List<bool> revealedCards; // Track revealed cards
+  late List<bool> revealedCards;
+
+  List<List<String>> playerNameAndTheirWord = [];
 
   @override
   void initState() {
@@ -122,8 +128,18 @@ class _GameScreenState extends State<GameScreen> {
     pairOfWord =
         Storage.words.elementAt(Random().nextInt(Storage.words.length));
     undercoverIndex = Random().nextInt(players.length);
-    revealedCards =
-        List<bool>.filled(players.length, false); // Initialize the list
+
+    revealedCards = List<bool>.filled(players.length, false);
+    players.forEach(
+      (element) {
+        playerNameAndTheirWord.add([
+          element,
+          element == players[undercoverIndex]
+              ? pairOfWord[0].toUpperCase()
+              : pairOfWord[1].toUpperCase()
+        ]);
+      },
+    );
   }
 
   void _revealCard(int index) {
@@ -137,8 +153,8 @@ class _GameScreenState extends State<GameScreen> {
         return AlertDialog(
           title: Text('Card Revealed'),
           content: Text(players[index] == players[undercoverIndex]
-              ? pairOfWord[0]
-              : pairOfWord[1]),
+              ? pairOfWord[0].toUpperCase()
+              : pairOfWord[1].toUpperCase()),
           actions: [
             TextButton(
               onPressed: () {
@@ -157,11 +173,7 @@ class _GameScreenState extends State<GameScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(players.toString() +
-        "\n" +
-        pairOfWord.toString() +
-        '\n' +
-        players[undercoverIndex]);
+    print(playerNameAndTheirWord.toList());
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         backgroundColor: revealedCards.contains(false)
@@ -169,8 +181,24 @@ class _GameScreenState extends State<GameScreen> {
             : FloatingActionButtonThemeData().backgroundColor,
         child: Icon(Icons.keyboard_double_arrow_right),
         onPressed: () {
-          if (revealedCards.length == players.length) {
-            print("u can move to next round");
+          if (revealedCards.contains(false)) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("someone haven't seen his word!")));
+          } else {
+            for (int i = 0; i < players.length; i++) {
+              playerNameAndTheirWord[i] = [
+                players[i],
+                players[i] == players[undercoverIndex]
+                    ? pairOfWord[0].toUpperCase()
+                    : pairOfWord[1].toUpperCase()
+              ];
+            }
+            Navigator.of(context).pushReplacement(MaterialPageRoute(
+              builder: (context) => VotingScreen(
+                unndercoverName: players[undercoverIndex],
+                playersAndTheirWords: playerNameAndTheirWord,
+              ),
+            ));
           }
         },
       ),
@@ -185,7 +213,7 @@ class _GameScreenState extends State<GameScreen> {
               color: revealedCards[index]
                   ? Colors.red
                   : Colors.green, // Change color based on revealed state
-              child: Center(child: Text(players[index])),
+              child: Center(child: Text(players[index].toUpperCase())),
             ),
           );
         },

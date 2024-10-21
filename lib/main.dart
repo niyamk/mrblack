@@ -16,8 +16,8 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: SelectGroupScreen(),
-        // body: TestScreen(),
+        // body: SelectGroupScreen(),
+        body: TestScreen(),
       ),
     );
   }

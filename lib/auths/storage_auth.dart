@@ -5,17 +5,10 @@ class Storage {
       'bhargav',
       'taksh',
       'baldha',
-      'Tanveer',
-      'hetav',
-      'ashish'
     ],
     "no ashish": [
       'niyam',
       'bhargav',
-      'taksh',
-      'baldha',
-      'Tanveer',
-      'hetav',
     ]
   };
 

@@ -1,27 +1,64 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:mrblack/auths/storage_auth.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class TestScreen extends StatefulWidget {
+  const TestScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<TestScreen> createState() => _TestScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  
+class _TestScreenState extends State<TestScreen> {
+  late Map<String, List<String>> groups;
 
-
+  @override
+  void initState() {
+    super.initState();
+    groups = Storage.group; // Ensure this is properly initialized
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GridView(gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),children: [],),
-  
+      body: ListView(
+        children: [
+          Card(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    "Jod Gang",
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Container(
+                  height: 400, // Fixed height for GridView
+                  child: GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 4,
+                      childAspectRatio: 1, // Adjust aspect ratio as needed
+                    ),
+                    itemCount: groups.length,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        child: Center(
+                          child: Text(groups.keys.elementAt(index)),
+                        ),
+                      );
+                    },
+                    physics: NeverScrollableScrollPhysics(),
+                    // Disable scrolling for GridView
+                    shrinkWrap:
+                        true, // Allow GridView to take only necessary space
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
-
-  Card customCard(){
-    return Card(child: Icon(Icons.question_mark),);
-  }
-
 }
