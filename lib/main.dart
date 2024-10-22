@@ -17,7 +17,15 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         // body: SelectGroupScreen(),
-        body: TestScreen(),
+        body: TestScreen(
+          unndercoverName: 'taksh',
+          playersAndTheirWords: [
+            ['niyam', 'civi'],
+            ['taksh', 'impos'],
+            ['baldha', 'civi'],
+            ['bhargav', 'civi']
+          ],
+        ),
       ),
     );
   }

@@ -15,80 +15,78 @@ class _SelectGroupScreenState extends State<SelectGroupScreen> {
 
   @override
   void initState() {
-    groups = Storage.group;
     super.initState();
+    groups = Storage.group ?? {}; // Ensure this is properly initialized
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: ListView.builder(
-          shrinkWrap: true,
-          itemCount: groups.length,
-          padding: EdgeInsets.symmetric(horizontal: 30, vertical: 60),
-          itemBuilder: (context, index) {
-            String currentGroupName = groups.keys.toList()[index];
-            List<String> playerNames = groups[currentGroupName]!;
-            // Define the number of columns in the grid
-            int crossAxisCount = 4;
-            // Calculate the number of rows needed
-            int rowCount = (playerNames.length / crossAxisCount).ceil();
-            // Calculate the height of the GridView dynamically (assuming each item has a height of 100)
-            double gridHeight = rowCount * 120; // Adjust per item height
-
-            return Card(
-              color: Colors.blue,
-              child: Column(
-                children: [
-                  SizedBox(height: 10),
-                  Row(
+      body: Padding(
+        padding: const EdgeInsets.all(18.0),
+        child: ListView(
+          children: List.generate(
+            groups.length,
+            (index) {
+              String currentGroupName = groups.keys.elementAt(index);
+              List<String> playerNames = groups[currentGroupName]!;
+              return Card(
+                color: Colors.grey.shade300,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
                     children: [
-                      Spacer(flex: 5),
-                      Text(currentGroupName.capitalize!),
-                      Spacer(flex: 4),
-                      GestureDetector(
-                        child: Icon(Icons.play_arrow),
-                        onTap: () {
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => GameScreen(
-                                  players: playerNames,
-                                ),
-                              ));
-                        },
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SizedBox(),
+                            Text(
+                              currentGroupName.toUpperCase(),
+                              style: TextStyle(
+                                  fontSize: 24, fontWeight: FontWeight.bold),
+                            ),
+                            ElevatedButton(
+                                onPressed: () {
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => GameScreen(
+                                          players: playerNames,
+                                        ),
+                                      ));
+                                },
+                                child: Text("Play")),
+                          ],
+                        ),
                       ),
-                      SizedBox(width: 10),
+                      // Directly using GridView without Flexible or Expanded
+                      GridView.builder(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 4,
+                          childAspectRatio: 1, // Adjust aspect ratio as needed
+                        ),
+                        itemCount: playerNames.length,
+                        // Use actual number of items
+                        itemBuilder: (context, index2) {
+                          return Card(
+                            child: Center(
+                              child: Text(playerNames[index2].toUpperCase()),
+                            ),
+                          );
+                        },
+                        physics: NeverScrollableScrollPhysics(),
+                        // Disable scrolling for GridView
+                        shrinkWrap:
+                            true, // Allow GridView to take only necessary space
+                      ),
                     ],
                   ),
-                  SizedBox(
-                    height: gridHeight, // Use dynamic height
-                    child: GridView.builder(
-                      physics:
-                          NeverScrollableScrollPhysics(), // Disable scrolling in GridView
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: crossAxisCount, // Adjust as needed
-                      ),
-                      itemCount: playerNames.length,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          margin: EdgeInsets.all(4),
-                          // padding: EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                            color: Colors.red,
-                            borderRadius: BorderRadius.circular(90),
-                          ),
-                          alignment: Alignment.center,
-                          child: Text(playerNames[index]),
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
+                ),
+              );
+            },
+          ),
         ),
       ),
     );
